@@ -36,5 +36,6 @@ func UploadHomework(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
+	w.Header().Set("Location", "/success")
 	fmt.Println(StudentId)
 }
