@@ -15,7 +15,7 @@ func UploadHomework(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "not take file")
 	}
 	StudentId := r.FormValue("StudentId")
-	if !Checkout_studentid(StudentId) {
+	if !CheckoutStudentid(StudentId) {
 		fmt.Fprintln(w, "Invalid studentid, try again!")
 		return
 	}
