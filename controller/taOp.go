@@ -5,8 +5,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/Weltloose/webProject/grpcForRedis"
 	"github.com/Weltloose/webProject/model"
-	"github.com/Weltloose/webProject/redisOp"
 )
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
@@ -22,8 +22,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("name")
 	passwd := r.FormValue("passwd")
 	if model.Login(name, passwd) == true {
-		val := redisOp.GenerateAuthCookie(name, passwd, 600*1e9)
-		fmt.Println(val)
+		val := grpcForRedis.RPCSetAuthInfo(name, passwd, 600*1e9)
 		http.SetCookie(w, &http.Cookie{
 			Name:   "Authed",
 			Value:  val,
@@ -40,7 +39,7 @@ func PublichHomeworkHandler(w http.ResponseWriter, r *http.Request) {
 	passwd := r.FormValue("passwd")
 	c, err := r.Cookie("Authed")
 	if err == nil {
-		tname, tpasswd := redisOp.GetAuth(c.Value)
+		tname, tpasswd := grpcForRedis.RPCGetAuth(c.Value)
 		if tname != "" && tpasswd != "" {
 			name = tname
 			passwd = tpasswd
@@ -60,7 +59,7 @@ func GetHomeworkHandler(w http.ResponseWriter, r *http.Request) {
 	passwd := r.FormValue("passwd")
 	c, err := r.Cookie("Authed")
 	if err == nil {
-		tname, tpasswd := redisOp.GetAuth(c.Value)
+		tname, tpasswd := grpcForRedis.RPCGetAuth(c.Value)
 		if tname != "" && tpasswd != "" {
 			name = tname
 			passwd = tpasswd
